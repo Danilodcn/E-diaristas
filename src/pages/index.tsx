@@ -44,7 +44,7 @@ const Home: NextPage = () => {
           <TextFieldMask
             onKeyDown={(event) => precionaEnter(event)}
             mask={"99.999-999"}
-            label={"Digite seu CPF"}
+            label={"Digite seu CEP"}
             fullWidth
             variant="outlined"
             value={cep}
