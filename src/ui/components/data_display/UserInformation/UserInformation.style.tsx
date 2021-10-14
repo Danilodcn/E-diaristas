@@ -8,7 +8,7 @@ export const UserInformationContainer = styled("div")`
     "avatar name"
     "avatar rating"
     "avatar description";
-  background-color: ${({ theme }) => theme.palette.grey["200"]};
+  background-color: ${({ theme }) => theme.palette.background.paper};
   padding: ${({ theme }) => theme.spacing(3)};
   gap: ${(props) =>
     props.theme.spacing(0.5) +

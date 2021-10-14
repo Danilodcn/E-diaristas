@@ -1,9 +1,34 @@
+import { Button, Container, Typography, CircularProgress } from "@mui/material";
 import PageTitle from "ui/components/data_display/PageTitle/PageTitle";
-import SafeEnvironment from "ui/components/feedback/SafeEnvironment/SafeEnvironmet";
 import UserInformation from "ui/components/data_display/UserInformation/UserInformation";
+import SafeEnvironment from "ui/components/feedback/SafeEnvironment/SafeEnvironmet";
+import TextFieldMask from "ui/components/inputs/TextFieldMask/TextFieldMask";
+import {
+  FormElementContainer,
+  ProfissionaisContainer,
+  ProfissionaisPaper,
+} from "ui/styles/index.style";
+import useIndex from "data/hooks/pages/useIndex.page";
 
+import { UserShortInterface } from "data/@types/UerInterface";
 import type { NextPage } from "next";
+import zIndex from "@mui/material/styles/zIndex";
+
 const Home: NextPage = () => {
+  const {
+    cep,
+    setCep,
+    cepValido,
+    buscarProfissionais,
+    erro,
+    diaristas,
+    buscaFeita,
+    carregando,
+    diaristasRestantes,
+    precionaEnter,
+    readInputCep,
+  } = useIndex();
+  // mostarDiaristas()
   return (
     <div>
       <SafeEnvironment />
@@ -13,12 +38,83 @@ const Home: NextPage = () => {
           "Preencha seu endereço e veja todos os profissionais da sua localidade"
         }
       />
-      <UserInformation
-        name={"Eloisa Elena"}
-        picture = {"https://cdn.pixabay.com/photo/2021/01/02/17/24/rear-5882411_960_720.jpg"}
-        rating = {3}
-        description = {"São Paulo"}
-      />
+
+      <Container>
+        <FormElementContainer>
+          <TextFieldMask
+            onKeyDown={(event) => precionaEnter(event)}
+            mask={"99.999-999"}
+            label={"Digite seu CPF"}
+            fullWidth
+            variant="outlined"
+            value={cep}
+            onChange={(event) => readInputCep(event)}
+          />
+
+          {erro && cep != "" ? (
+            <Typography color={"error"}> {erro} </Typography>
+          ) : (
+            <div></div>
+          )}
+
+          <Button
+            variant={"contained"}
+            color={"secondary"}
+            sx={{ width: "220px" }}
+            disabled={!cepValido || carregando}
+            onClick={() => buscarProfissionais()}
+          >
+            {carregando ? <CircularProgress size={20} /> : "Buscar"}
+          </Button>
+        </FormElementContainer>
+        {buscaFeita &&
+          (diaristas.length > 0 ? (
+            <ProfissionaisPaper>
+              <ProfissionaisContainer>
+                {diaristas.map((elem, index) => {
+                  return (
+                    <UserInformation
+                      key={index}
+                      name={elem.nome_completo}
+                      picture={elem.foto_usuario}
+                      rating={elem.reputacao}
+                      description={elem.cidade}
+                    />
+                  );
+                })}
+              </ProfissionaisContainer>
+              <Container sx={{ mt: 1, textAlign: "center" }}>
+                {diaristasRestantes > 0 ? (
+                  <Typography sx={{ mt: 1 }}>
+                    ... e mais {diaristasRestantes}{" "}
+                    {diaristasRestantes > 1
+                      ? "profissionais atendem"
+                      : "profissional atende"}{" "}
+                    ao seu endereço
+                  </Typography>
+                ) : (
+                  <></>
+                )}
+
+                <Button
+                  variant={"contained"}
+                  color={"secondary"}
+                  sx={{ mt: 3 }}
+                >
+                  Contratar um profissional{" "}
+                </Button>
+              </Container>
+            </ProfissionaisPaper>
+          ) : (
+            <Typography
+              align={"center"}
+              color={"textPrimary"}
+              sx={{ mt: 3, mb: 4 }}
+            >
+              Ainda não temos nenhuma diarista em sua região
+            </Typography>
+          ))}
+      </Container>
     </div>
   );
 };
